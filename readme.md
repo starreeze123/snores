@@ -14,6 +14,8 @@ Note that: although I strive to provide good service, program sometimes may fail
 
 南京大学体育场地预约脚本（客户端），目前仅支持羽毛球、乒乓球。
 
+目前为防止滥用，服务端仅对已获授权的账户开放预约服务。要获取授权，请联系starreeze@foxmail.com。
+
 当天 8 点前或前一天 9 点后运行客户端发送请求，服务器会在 8 点整开始执行预约操作。服务端程序会调出浏览器，并自动完成登录、选择场地、选择同伴、滑动验证码、支付等操作，可以比手动操作节省 2-3s，提高成功率；同时再也不用怕早 8 起不来了。
 
 信息传输已默认启用 RSA-2048 端到端加密；服务端不会存储任何用户信息和密码，仅用于登录预约系统。请放心使用。
@@ -22,7 +24,11 @@ Note that: although I strive to provide good service, program sometimes may fail
 
 ## Manual
 
-目前，客户端有两种使用方法，分别为傻瓜式（仅支持 windows）和参数式（能装 python 的平台都能用）；前者推荐没有计算机基础的用户使用，后者提供更精细的控制，但操作复杂。要运行傻瓜式，直接打开 `click-to-run_windows`文件夹，双击运行 `client.exe`，按照提示操作即可，不必再往下看了；要运行参数式，参阅下面说明。
+### Download & Install
+
+请从 [github-release](https://github.com/starreeze123/snores/releases) 下载最新版，其中包含源码和 windows 一键包。
+
+目前客户端有两种使用方法，分别为傻瓜式（仅支持 windows）和参数式（能装 python 的平台都能用）；前者推荐没有计算机基础的用户使用，后者提供更精细的控制，但操作复杂。要运行傻瓜式，直接双击运行 `click-to-run_windows.exe`按照提示操作即可，不必再往下看了；要运行参数式，参阅下面说明。
 
 ### Preparation
 
