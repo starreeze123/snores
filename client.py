@@ -4,6 +4,7 @@
 
 import socket, sys
 from argparse import ArgumentParser
+from pwinput import pwinput
 
 try:
     from Crypto.PublicKey import RSA
@@ -32,7 +33,7 @@ desc_eng = {
     102: "connection failed; if you are in the campus and your network is ok, please try again later\nif this error persists, please contact the developer",
 }
 desc_chn = {
-    0: "操作成功；请于8:00后自行核查预约记录，如有异常，请联系开发者",
+    0: "操作成功，您可以重新运行来修改提交的信息；请于8:00后自行核查预约记录，如有异常，请联系开发者",
     1: "您的账号未经授权，请联系开发者",
     2: "您来得太晚（早？）了，如您计划预约明天的场地，请于9:00后重试",
     3: "请注意: 您今天已经发送了一次预约请求，本次请求已经覆盖了之前的一次",
@@ -54,7 +55,10 @@ def exit_with(code: int):
 
 
 def report_bug(message):
-    print("unknown error; please report this bug to developer with the following error message:")
+    print(
+        "unknown error; please update to the latest version.\n"
+        "If it already is, please report this bug to developer with the following error message:"
+    )
     print(message)
 
 
@@ -109,8 +113,8 @@ def simple_mode() -> str:
     type_id = input("请选择您想要预约的场地类型（输入数字编号回车即可）：\n0.fzz羽毛球（楼下）\n2.fzz乒乓球\n5.szt羽毛球\n")
     period = input("请选择时间段（开始时间，24小时制，例如想要下午4-5则输入16）：")
     field = input("请选择场地（不填可以直接回车，视为任选）：")
-    user = input("学号：")
-    passwd = input("统一认证密码：")
+    user = input("学号（开发者承诺，不会将用户信息和密码用于除登录预约系统外的任何用途）：")
+    passwd = pwinput("统一认证密码：")
     res = f"--user {user} --passwd {passwd} -t {type_id} -p {period}"
     if not (type_id and period and user and passwd):
         print("参数错误：除了场地，其他字段均为必填；请重新运行")
