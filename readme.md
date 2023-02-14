@@ -2,7 +2,9 @@
 
 **S**cript for **N**JU Sp**o**rt **Re**servation **S**ystem
 
-Version 3.2 preview1 client, copyright (c) 2022~2023 by starreeze (starreeze@foxmail.com).
+Run this script and SNORE happily next morning - the server will do everything for you!
+
+Version 3.2 preview2 client, copyright (c) 2022~2023 by starreeze (starreeze@foxmail.com).
 
 ## License
 
@@ -28,7 +30,7 @@ Note that: although I strive to provide good service, program sometimes may fail
 
 请从 [github-release](https://github.com/starreeze123/snores/releases) 下载最新版，其中包含源码和 windows 一键包。
 
-目前客户端有两种使用方法，分别为傻瓜式（仅支持 windows）和参数式（能装 python 的平台都能用）；前者推荐没有计算机基础的用户使用，后者提供更精细的控制，但操作复杂。要运行傻瓜式，直接双击运行 `click-to-run_windows.exe`按照提示操作即可，不必再往下看了；要运行参数式，参阅下面说明。
+目前客户端有两种使用方法，分别为傻瓜式（仅支持 windows）和参数式（能装 python 的平台都能用）；前者推荐没有计算机基础的用户使用，后者提供更精细的控制，但操作复杂。要运行傻瓜式，直接双击运行 `snores-client.exe`按照提示操作即可，不必再往下看了；要运行参数式，参阅下面说明。
 
 ### Preparation
 
