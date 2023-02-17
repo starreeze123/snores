@@ -15,13 +15,12 @@ jobs:
         python-version: 3.10
     - name: Set up requirements
       run: |
+        python -m ensurepip
+        easy_install pip
         python -m pip install -r requirements.txt
     - name: package
       run: |
         pyinstaller -i icon.png -F client.py
-  release:
-    runs-on: ubuntu-latest
-    steps:
     - name: Create Draft Release
       id: create_release
       uses: actions/create-release@v1
