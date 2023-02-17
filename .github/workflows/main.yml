@@ -10,15 +10,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v3
+    - uses: actions/setup-python@v3
       with:
         python-version: 3.10
     - name: Set up requirements
-      run: |
-        python -m ensurepip
-        easy_install pip
-        python -m pip install -r requirements.txt
-    - name: package
+    - uses: BSFishy/pip-action@v1
+      with:
+        requirements: requirements.txt
+    - name: build package
       run: |
         pyinstaller -i icon.png -F client.py
     - name: Create Draft Release
