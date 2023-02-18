@@ -1,0 +1,1 @@
+pyinstaller -i icon.png -F client.py

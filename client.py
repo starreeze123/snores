@@ -5,15 +5,11 @@
 import socket, sys
 from argparse import ArgumentParser
 from pwinput import pwinput
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
 
-try:
-    from Crypto.PublicKey import RSA
-    from Crypto.Cipher import PKCS1_OAEP
-except ImportError:
-    enable_encryption = False
-    print("WARNING: encryption disabled because pycryptodome is not installed.")
-
-
+MAIN_VERSION = [3, 2, 3]
+PROTOCOL_VERSION = 2
 HOST = "210.28.135.91"
 PORT = 65432
 KEY_FILE = "public.pem"
@@ -31,6 +27,9 @@ desc_eng = {
     100: "connecting to the server...",
     101: "please wait for around 30s while the server is validating your information...",
     102: "connection failed; if you are in the campus and your network is ok, please try again later\nif this error persists, please contact the developer",
+    103: f"Main version: {'.'.join([str(s) for s in MAIN_VERSION])}; Protocol version: {PROTOCOL_VERSION}.0\nhttps://github.com/starreeze123/snores",
+    104: "ERROR: protocol version mismatch (server version: v%s)! Please visit https://github.com/starreeze123/snores to download the latest version",
+    105: "connection successful; protocol verification pass",
 }
 desc_chn = {
     0: "操作成功，您可以重新运行来修改提交的信息；请于8:00后自行核查预约记录，如有异常，请联系开发者",
@@ -44,6 +43,9 @@ desc_chn = {
     100: "正在连接服务器...",
     101: "请稍等，正在验证您的信息，大约需要30秒...",
     102: "连接失败或超时；如果您确认正常接入了校内网，请再试一次；若仍然失败，请联系开发者",
+    103: f"客户端版本号: v{'.'.join([str(s) for s in MAIN_VERSION])}; 通讯协议版本号: v{PROTOCOL_VERSION}.0\n访问 https://github.com/starreeze123/snores 获取最新信息",
+    104: "ERROR：通讯协议版本号与服务端不匹配（服务端版本：v%s）。请访问 https://github.com/starreeze123/snores 下载最新客户端",
+    105: "连接成功；通讯协议验证通过",
 }
 desc = [desc_eng, desc_chn]
 
@@ -148,22 +150,21 @@ def encrypt(message: str, key_file: str) -> bytes:
 
 
 def main():
-    if len(sys.argv) < 2:
-        args_str = simple_mode()
-        mode = 1
-    else:
-        args_str = complex_mode()
-        mode = 0
+    mode = int(len(sys.argv) < 2)
+    print(desc[mode][103])
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(6)
         print(desc[mode][100])
         try:
             s.connect((HOST, PORT))
-        except (ConnectionRefusedError, socket.timeout):
-            print(desc[mode][102])
-            exit_with(128)
-        try:
+            version = s.recv(1)[0]
+            if version != PROTOCOL_VERSION:
+                print(desc[mode][104] % version)
+                exit_with(-1)
+            else:
+                print(desc[mode][105])
             s.settimeout(connection_timeout)
+            args_str = simple_mode() if mode else complex_mode()
             if enable_encryption:
                 s.sendall(encrypt(args_str, KEY_FILE))
             else:

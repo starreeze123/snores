@@ -1,0 +1,4 @@
+pycryptodome
+pwinput
+pyinstaller
+Pillow
