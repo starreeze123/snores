@@ -4,7 +4,7 @@
 
 Run this script and SNORE happily next morning - the server will do everything for you!
 
-Version 3.2 preview2 client, copyright (c) 2022~2023 by starreeze (starreeze@foxmail.com).
+Version 3.2 stable client, copyright (c) 2022~2023 by starreeze (starreeze@foxmail.com).
 
 ## License
 
@@ -35,7 +35,7 @@ Note that: although I strive to provide good service, program sometimes may fail
 ### Preparation
 
 1. 安装 python(>=3.6)，推荐 3.9+，版本向下兼容。
-2. `pip install pycryptodome`
+2. `pip install -r requirements.txt`
 
 ### Usage
 
@@ -120,3 +120,5 @@ v3.1 stable, 2022.12.24: 修复了服务端在部分服务器上无法启动和�
 v3.2 preview1, 2023.01.24: 服务端支持在线验证用户信息，密码错误/触发验证码立即提醒；客户端添加中文语言
 
 v3.2 preview2, 2023.02.14: 修复场地选择的 bug；客户端交互改进
+
+v3.2 stable, 2023.02.18: 客户端与服务端版本一致性检查；客户端交互改进；通过了更全面的测试
