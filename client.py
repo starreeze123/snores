@@ -23,7 +23,7 @@ desc_eng = {
     4: "ERROR: login failed - probable reason: wrong password; if you believe it's not your fault, please contact the developer",
     5: "ERROR: login failed - probable reason: SMS verification triggered; please login manually and try again",
     6: "ERROR: login failed - unknown error; if you can login manually, please contact the developer",
-    -1: "forbidden; if you believe this is a mistake, please contact the developer",
+    255: "forbidden; if you believe this is a mistake, please contact the developer",
     100: "connecting to the server...",
     101: "please wait for around 30s while the server is validating your information...",
     102: "connection failed; if you are in the campus and your network is ok, please try again later\nif this error persists, please contact the developer",
@@ -39,7 +39,7 @@ desc_chn = {
     4: "登录失败，可能原因：密码错误；如果您确认提供了正确的密码，请联系开发者",
     5: "登录失败，可能原因：触发了短信验证码；请立即自行登录一次系统，然后重试",
     6: "登录失败，未知错误；如果您可以正常手动登录，请联系开发者",
-    -1: "FORBIDDEN: 如果您坚持认为自己没有问题，请联系开发者",
+    255: "FORBIDDEN: 如果您坚持认为自己没有问题，请联系开发者",
     100: "正在连接服务器...",
     101: "请稍等，正在验证您的信息，大约需要30秒...",
     102: "连接失败或超时；如果您确认正常接入了校内网，请再试一次；若仍然失败，请联系开发者",
@@ -188,3 +188,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    #args_str = simple_mode()
+    #print(args_str)
+    #encrypted = encrypt(args_str, KEY_FILE)
+    #print(f'DEBUG: the first 2 bytes of this message: {int(encrypted[0]), int(encrypted[1])}')
