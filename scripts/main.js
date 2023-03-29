@@ -110,6 +110,7 @@ async function run() {
     console.log(args)
 
     var timer = setInterval(progress_step, progressTime)
+    var timeoutId = null
 
     // send request
     var socket = new WebSocket("ws://210.28.135.91:65433")
@@ -118,6 +119,8 @@ async function run() {
     })
     socket.addEventListener('message', event => {
         clearInterval(timer)
+        if (timeoutId != null)
+            clearTimeout(timeoutId)
         progress.style.visibility = 'hidden'
         button.style.visibility = 'visible'
         status_code = event.data.charCodeAt(0)
@@ -143,7 +146,7 @@ async function run() {
     function progress_step() {
         if (width >= 99) {
             clearInterval(timer)
-            setTimeout(() => {
+            timeoutId = setTimeout(() => {
                 show_message(desc_chn[102])
                 progress.style.visibility = 'hidden'
                 button.style.visibility = 'visible'
