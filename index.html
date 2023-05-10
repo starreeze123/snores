@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Snores Client</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+</head>
+
+<link rel="shortcut icon" href="assets/icon.png" />
+
+<body>
+	<!-- <video src="assets/bg.webm"
+		style="width: 100%; height: 100%; object-fit: cover; position: fixed; z-index: -1; top: 0; left: 0; opacity: 0.15;"
+		autoplay="autoplay" loop="loop" muted="muted"></video> -->
+	<h1>Snores💤</h1>
+	<p><b>S</b>cript for <b>N</b>JU Sp<b>o</b>rt <b>Re</b>servation <b>S</b>ystem</p>
+	<p>Run this script and SNORE happily next morning - the server will do everything for you!</p>
+	<p>Version 4.1.0, copyright (c) 2022~2023 by starreeze (starreeze@foxmail.com).</p>
+
+
+	<h2>Usage</h2>
+	填写下面的信息，点击 SNORES! 即可预约明天的场地。<br><br>
+	目前（其他人使用本脚本的）预约情况（请主动避开，否则会预约失败）：
+	<p id="order" style="color: crimson;">正在加载场地信息，请不要点击SNORES按钮……</p>
+	<br><br>
+	<form>
+		<label for="type" style="width: 130px; float: left;">*场地类型:</label>
+		<select id="type" name="type">
+			<option value="0">方方肇周羽毛球（楼下）</option>
+			<option value="1">方肇周羽毛球（楼上）</option>
+			<option value="2">方肇周乒乓球</option>
+			<option value="5" selected="selected">四组团羽毛球</option>
+		</select><br><br>
+		<label for="time" style="width: 130px; float: left;">*时间段:</label>
+		<select id="time" name="time">
+			<option value="9">9-10</option>
+			<option value="10">10-11</option>
+			<option value="11">11-12</option>
+			<option value="12">12-13</option>
+			<option value="13">13-14</option>
+			<option value="14">14-15</option>
+			<option value="15">15-16</option>
+			<option value="16">16-17</option>
+			<option value="17">17-18</option>
+			<option value="18">18-19</option>
+			<option value="19" selected="selected">19-20</option>
+			<option value="20">20-21</option>
+		</select><br><br>
+		<label for="field" style="width: 240px; float: left;">*场地（直接输入数字）:</label>
+		<input type="text" id="field" name="field" value="1" style="width: 60px;"><br><br>
+		<label for="user" style="width: 130px; float: left;">*学号: </label>
+		<input type="text" id="user"><br><br>
+		<label for="password" style="width: 130px; float: left;">*统一认证密码:</label>
+		<input type="password" id="password" name="password"><br><br>
+		<input type="checkbox" id="fallback" name="fallback">
+		<label for="fallback">如果满足条件的场地无法选择，帮我任意选择一个其他的</label><br><br>
+		<input type="checkbox" id="store_pwd" name="store_pwd" checked="true">
+		<label for="store_pwd">将我的账号密码保存在本地浏览器中，便于下次使用</label><br><br>
+	</form>
+	<button type="button" onclick="run()" id="button"
+		style="width: 180px; height: 40px; color: crimson; background-color: lightcyan;">
+		SNORES!
+	</button>
+
+	<div id="progress" style="width: 100%; background-color: #ddd; visibility: hidden;">
+		<div id="progress_bar"
+			style="width: 0%; height: 30px; background-color: #4CAF50; line-height: 30px; color: white;"></div>
+	</div>
+
+	<p id="prompt" style="color: crimson;"></p>
+
+
+	<h2>Introduction</h2>
+	<p>南京大学体育场地预约脚本（客户端），目前仅支持羽毛球、乒乓球。</p>
+	<p>目前为防止滥用，服务端仅对已获授权的账户开放预约服务。要获取授权，请联系starreeze@foxmail.com。</p>
+	<p>当天 8 点前或前一天 9 点后运行客户端发送请求，服务器会在 8 点整开始执行预约操作。服务端程序会调出浏览器，并自动完成登录、选择场地、选择同伴、滑动验证码、支付等操作，可以比手动操作节省
+		2-3s，提高成功率；同时再也不用怕早 8 起不来了。</p>
+	<p>目前信息使用明文传输，请确保网络环境安全；开发者承诺，不会将用户信息和密码用于除登录预约系统外的任何用途；服务器在校内，一旦出现问题可溯源：请放心使用。</p>
+	<p>使用前请确保在系统中添加了至少一个同伴，将会默认使用第一个同伴。</p>
+
+	<h2>Change Log</h2>
+	<p>v1.0, 2022.11.07: 基本功能：定时预约抢场地</p>
+	<p>v2.0 preview1, 2022.11.21: 系统添加了验证码，更换了基于浏览器的框架，使得可以手工输入验证码；同时支持自动登录</p>
+	<p>v2.0 preview2, 2022.11.26: 修复周末预约失败的 bug；部分功能实现从 python 改为使用 JavaScript，速度更快</p>
+	<p>v2.0 stable, 2022.11.27: 修复工作日预约失败的 bug</p>
+	<p>v2.1 preview1, 2022.11.28: 破解滑动验证码，实现全流程 'end to end'，妈妈再也不用担心我早 8 起不来啦</p>
+	<p>v2.1 preview2, 2022.11.28: 部分场地信息从硬编码改为动态获取，提高鲁棒性</p>
+	<p>v2.1 stable, 2022.12.02: 修复了滑动验证码有一定概率失败的 bug；测试了不同操作系统和浏览器支持</p>
+	<p>v2.2 preview1, 2022.12.06: 简化算法，提高滑动验证码的识别效率；提供 headless 选项，支持直接部署在服务器上（暂未测试）</p>
+	<p>v3.0 preview1, 2022.12.11: 测试了服务器部署，并开发了对应的服务端和客户端，使用方便，源码可控</p>
+	<p>v3.1 preview1, 2022.12.18: 客户端与服务端通信加密；打包 windows 一键包</p>
+	<p>v3.1 stable, 2022.12.24: 修复了服务端在部分服务器上无法启动和异常结束的 bug；更完善的异常处理，提高鲁棒性；优化服务端逻辑，降低资源占用；支持客户端多次提交请求，以后发的为准</p>
+	<p>v3.2 preview1, 2023.01.24: 服务端支持在线验证用户信息，密码错误/触发验证码立即提醒；客户端添加中文语言</p>
+	<p>v3.2 preview2, 2023.02.14: 修复场地选择的 bug；客户端交互改进</p>
+	<p>v3.2 stable, 2023.02.18: 客户端与服务端版本一致性检查；客户端交互改进；通过了更全面的测试</p>
+	<p>v4.0.0, 2023.03.13: html+js+ws 重写客户端和服务端，跨平台体验更佳</p>
+	<p>v4.0.1, 2023.03.17: 加入 fallback 选项，页面加入 ChangeLog，优化 UI</p>
+	<p>v4.0.2, 2023.03.28: 修复客户端 websocket 不能正常关闭的 bug，优化 UI</p>
+	<p>v4.0.3, 2023.04.26: 添加保存账号密码选项</p>
+	<p>v4.1.0, 2023.05.08: 完善多用户逻辑，添加反馈和分级机制</p>
+</body>
+
+<script>
+	const progressTime = 40, waitTimeout = 30
+	const totalImgNum = 7, opacity = 0.2
+	const serverUrl = 'ws://210.28.135.91:65433'
+	// const serverUrl = 'ws://127.0.0.1:65433'
+	const desc_chn = {
+		0: "操作成功，您可以重新运行来修改提交的信息；请于8:00后自行核查预约记录，如有异常，请联系开发者",
+		1: "您的账号未经授权，请联系开发者",
+		2: "您来得太晚（早？）了，如您计划预约明天的场地，请于9:00后重试",
+		3: "操作成功: 您今天已经发送了一次预约请求，本次请求已经覆盖了之前的一次",
+		4: "登录失败，可能原因：密码错误；如果您确认提供了正确的密码，请联系开发者",
+		5: "登录失败，可能原因：触发了短信验证码；请立即自行登录一次系统，然后重试",
+		6: "登录失败，未知错误；如果您可以正常手动登录，请联系开发者",
+		10: "FORBIDDEN: 如果您坚持认为自己没有问题，请联系开发者",
+		100: "正在连接服务器...",
+		101: "请稍等，正在验证您的信息，大约需要30-45秒；请不要锁屏，并始终将本页面置于前台，直到收到结果提示",
+		102: "连接失败或超时；如果您确认正常接入了校内网，请再试一次；若仍然失败，请联系开发者",
+		103: "请尽量不要使用腾讯内置浏览器，否则您的体验会受到影响！建议点击右上角选择浏览器打开",
+		104: "带 * 号字段必填！",
+	}
+
+	var socket = null
+
+	function start() {
+		load_resource()
+		restore_passwd()
+		document.addEventListener('DOMContentLoaded', () => {
+			if (is_inner())
+				show_message(desc_chn[103], false)
+			socket = new WebSocket(serverUrl)
+			socket.onerror = (_error => {
+				show_message(desc_chn[102])
+			})
+			socket.addEventListener('message', on_status_received)
+		})
+	}
+
+	function on_status_received(event) {
+		parent = document.getElementById('order')
+		try {
+			parent.removeChild(parent.firstChild)
+		}
+		catch (error) { }
+		parent.appendChild(document.createTextNode(event.data))
+	}
+
+	function load_resource() {
+		var node = null
+		if (is_mobile()) {
+			node = document.createElement('img')
+			day = Math.floor(Date.now() / 1000 / 3600 / 24)
+			node.src = `assets/bg-${day % totalImgNum + 1}.webp`
+		}
+		else {
+			node = document.createElement('video')
+			node.src = 'assets/bg.webm'
+			node.autoplay = 'autoplay'
+			node.loop = 'loop'
+			node.muted = 'muted'
+		}
+		node.style.width = '100%'
+		node.style.height = '100%'
+		node.style.objectFit = 'cover'
+		node.style.position = 'fixed'
+		node.style.zIndex = '-1'
+		node.style.top = '0'
+		node.style.left = '0'
+		node.style.opacity = `${opacity}`
+		document.body.insertBefore(node, document.body.firstChild)
+	}
+
+	function restore_passwd() {
+		const user = localStorage.getItem("user")
+		if (user) {
+			document.getElementById("user").value = user
+			document.getElementById("password").value = localStorage.getItem("password")
+		}
+	}
+
+	function is_inner() {
+		var ua = navigator.userAgent.toLowerCase()
+		if (ua.match(/MicroMessenger/i) == "micromessenger") {
+			return "weixin"
+		} else if (ua.match(/QQ/i) == "qq") {
+			return "QQ"
+		}
+		return false
+	}
+
+	function is_mobile() {
+		var userAgentInfo = navigator.userAgent.toLowerCase()
+		var Agents = new Array("android", "iphone", "symbianos", "windows phone", "ipod")
+		for (var v = 0; v < Agents.length; v++)
+			if (userAgentInfo.indexOf(Agents[v]) > 0)
+				return true
+		return false
+	}
+
+	function show_message(msg, dialog = true) {
+		var parent = document.getElementById('prompt')
+		try {
+			parent.removeChild(parent.firstChild)
+		}
+		catch (error) { }
+		parent.appendChild(document.createTextNode(msg))
+		if (dialog)
+			alert(msg)
+	}
+
+	async function run() {
+		// check args
+		const time = document.getElementById("time").value
+		const field = document.getElementById("field").value
+		const type = document.getElementById("type").value
+		const user = document.getElementById("user").value
+		const password = document.getElementById("password").value
+		if (!(time && user && field && password)) {
+			show_message(desc_chn[104])
+			return
+		}
+		if (document.getElementById("store_pwd").value) {
+			localStorage.setItem("user", user)
+			localStorage.setItem("password", password)
+		}
+		else {
+			localStorage.removeItem("user")
+			localStorage.removeItem("password")
+		}
+		var args_str = `--user ${user} --passwd ${password} -t ${type} -p ${time}`
+		if (field)
+			args_str += ` -f ${field}`
+		if (document.getElementById("fallback").checked)
+			args_str += ' --fallback'
+		const args = await encrypt(args_str)
+		console.log(args)
+
+		var timer = setInterval(progress_step, progressTime)
+		var timeoutId = null
+
+		// send request
+		socket.removeEventListener('message', on_status_received)
+		socket.addEventListener('message', event => {
+			clearInterval(timer)
+			if (timeoutId != null)
+				clearTimeout(timeoutId)
+			progress.style.visibility = 'hidden'
+			button.style.visibility = 'visible'
+			status_code = event.data.charCodeAt(0)
+			try {
+				socket.close()
+				show_message(desc_chn[status_code])
+			} catch (error) {
+				show_message(`Unknown error: please report this bug to developer with the following error message: ${error}. Turn off or refresh this page before you continue.`)
+			}
+		})
+		socket.onerror = (_error => {
+			clearInterval(timer)
+			progress.style.visibility = 'hidden'
+			button.style.visibility = 'visible'
+			show_message(desc_chn[102])
+		})
+
+		// show progress bar
+		var button = document.getElementById("button")
+		var progress = document.getElementById("progress")
+		var bar = document.getElementById("progress_bar")
+		var width = 0.0
+		function progress_step() {
+			if (width >= 99) {
+				clearInterval(timer)
+				timeoutId = setTimeout(() => {
+					show_message(desc_chn[102])
+					progress.style.visibility = 'hidden'
+					button.style.visibility = 'visible'
+					socket.close()
+				}, waitTimeout * 1000)
+			} else {
+				width += 0.1
+				bar.style.width = `${width}%`
+				bar.innerHTML = `&nbsp;&nbsp;${parseInt(width)}%`
+			}
+			progress.style.visibility = 'visible'
+			button.style.visibility = 'hidden'
+		}
+
+		socket.send(args)
+		show_message(desc_chn[101], false)
+	}
+
+	async function encrypt(message) {
+		return message
+	}
+
+	start()
+
+</script>
+
+
+</html>

@@ -1,6 +1,5 @@
 const progressTime = 40, waitTimeout = 30
 const totalImgNum = 7, opacity = 0.2
-const version = '4.0.2'
 const desc_chn = {
     0: "操作成功，您可以重新运行来修改提交的信息；请于8:00后自行核查预约记录，如有异常，请联系开发者",
     1: "您的账号未经授权，请联系开发者",
@@ -15,10 +14,34 @@ const desc_chn = {
     102: "连接失败或超时；如果您确认正常接入了校内网，请再试一次；若仍然失败，请联系开发者",
     103: "请尽量不要使用腾讯内置浏览器，否则您的体验会受到影响！建议点击右上角选择浏览器打开",
     104: "带 * 号字段必填！",
-    105: `版本已经更新到${version}，欢迎查看 changelog 以了解最新信息！`
 }
 
+var socket = null
+
 function start() {
+    load_resource()
+    restore_passwd()
+    document.addEventListener('DOMContentLoaded', () => {
+        if (is_inner())
+            show_message(desc_chn[103], false)
+        socket = new WebSocket("ws://210.28.135.91:65433")
+        socket.onerror = (_error => {
+            show_message(desc_chn[102])
+        })
+        socket.addEventListener('message', on_status_received)
+    })
+}
+
+function on_status_received(event) {
+    parent = document.getElementById('order')
+    try {
+        parent.removeChild(parent.firstChild)
+    }
+    catch (error) { }
+    parent.appendChild(document.createTextNode(event.data))
+}
+
+function load_resource() {
     var node = null
     if (is_mobile()) {
         node = document.createElement('img')
@@ -41,22 +64,13 @@ function start() {
     node.style.left = '0'
     node.style.opacity = `${opacity}`
     document.body.insertBefore(node, document.body.firstChild)
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (is_inner())
-            show_message(desc_chn[103], false)
-    })
-
-    // check version
-    var user_version = localStorage.getItem("version");
-    if (user_version == null) {
-        localStorage.setItem("version", version)
-        user_version = version
-    }
-    if (user_version != version) {
-        location.reload();
-        localStorage.setItem("version", version)
-        show_message(desc_chn[105], false)
+function restore_passwd() {
+    const user = localStorage.getItem("user")
+    if (user) {
+        document.getElementById("user").value = user
+        document.getElementById("password").value = localStorage.getItem("password")
     }
 }
 
@@ -101,6 +115,14 @@ async function run() {
         show_message(desc_chn[104])
         return
     }
+    if (document.getElementById("store_pwd").value) {
+        localStorage.setItem("user", user)
+        localStorage.setItem("password", password)
+    }
+    else {
+        localStorage.removeItem("user")
+        localStorage.removeItem("password")
+    }
     var args_str = `--user ${user} --passwd ${password} -t ${type} -p ${time}`
     if (field)
         args_str += ` -f ${field}`
@@ -113,10 +135,7 @@ async function run() {
     var timeoutId = null
 
     // send request
-    var socket = new WebSocket("ws://210.28.135.91:65433")
-    socket.addEventListener('open', _event => {
-        socket.send(args)
-    })
+    socket.removeEventListener('message', on_status_received)
     socket.addEventListener('message', event => {
         clearInterval(timer)
         if (timeoutId != null)
@@ -161,6 +180,7 @@ async function run() {
         button.style.visibility = 'hidden'
     }
 
+    socket.send(args)
     show_message(desc_chn[101], false)
 }
 
