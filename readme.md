@@ -1,7 +1,7 @@
 # Snores💤
 <p><b>S</b>cript for <b>N</b>JU Sp<b>o</b>rt <b>Re</b>servation <b>S</b>ystem</p>
 <p>Run this script and SNORE happily next morning - the server will do everything for you!</p>
-<p>Version 4.1.0, copyright (c) 2022~2023 by starreeze (starreeze@foxmail.com).</p>
+<p>Version 4.1.1, copyright (c) 2022~2023 by starreeze (starreeze@foxmail.com).</p>
 
 <p style="color: crimson;">NEW!</p>
 
@@ -34,3 +34,4 @@ visit http://210.28.135.91:65434/ to use!
 <p>v4.0.2, 2023.03.28: 修复客户端 websocket 不能正常关闭的 bug，优化 UI</p>
 <p>v4.0.3, 2023.04.26: 添加保存账号密码选项</p>
 <p>v4.1.0, 2023.05.08: 完善多用户逻辑，添加反馈和分级机制</p>
+<p>v4.1.1, 2023.05.24: 修复多用户bug，添加远程调试支持</p>
