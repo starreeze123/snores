@@ -78,14 +78,14 @@
 	<h2>Introduction</h2>
 	<p>南京大学体育场地预约脚本（客户端），目前仅支持羽毛球、乒乓球。</p>
 	<p>目前为防止滥用，服务端仅对已获授权的账户开放预约服务。要获取授权，请联系starreeze@foxmail.com。</p>
-	<p>当天 8 点前或前一天 9 点后运行客户端发送请求，服务器会在 8 点整开始执行预约操作。服务端程序会调出浏览器，并自动完成登录、选择场地、选择同伴、滑动验证码、支付等操作，可以比手动操作节省
+	<p>当天 8 点前运行客户端发送请求，服务器会在 8 点整开始执行预约操作。服务端程序会调出浏览器，并自动完成登录、选择场地、选择同伴、滑动验证码、支付等操作，可以比手动操作节省
 		2-3s，提高成功率；同时再也不用怕早 8 起不来了。</p>
 	<p>目前信息使用明文传输，请确保网络环境安全；开发者承诺，不会将用户信息和密码用于除登录预约系统外的任何用途；服务器在校内，一旦出现问题可溯源：请放心使用。</p>
 	<p>使用前请确保在系统中添加了至少一个同伴，将会默认使用第一个同伴。</p>
 
 	<h2>Known Issues</h2>
-	<p>client&server：验证身份信息时，进程异常卡死，触发超时（仅出现过1次）</p>
-	<p>预约主程序：获取场地信息时，读取起始/结束时间字符串为空（仅出现过1次）</p>
+	<p>client&server：验证身份信息时，进程异常卡死，触发超时（1次）</p>
+	<p>预约主程序：获取场地信息时，读取起始/结束时间字符串为空（1次）；获取场地信息时，识别场地表头和内部数据失败（1次）</p>
 
 	<h2>Change Log</h2>
 	<p>v1.0, 2022.11.07: 基本功能：定时预约抢场地</p>
@@ -111,6 +111,7 @@
 </body>
 
 <script>
+	const reserve_start = 8, maintain_end = 10
 	const progressTime = 40, waitTimeout = 30
 	const totalImgNum = 7, opacity = 0.2
 	const serverUrl = 'ws://210.28.135.91:65433'
@@ -118,7 +119,7 @@
 	const desc_chn = {
 		0: "操作成功，您可以重新提交以修改信息",
 		1: "您的账号未经授权，请联系开发者",
-		2: "您来得太晚（早？）了，如您计划预约明天的场地，请于9:00后重试",
+		2: "服务器于每日8:00-10:00例行维护，请于10:00后再预约",
 		3: "操作成功: 您今天已经发送了一次预约请求，本次请求已经覆盖了之前的一次",
 		4: "登录失败，可能原因：密码错误",
 		5: "登录失败，可能原因：触发了短信验证码；请立即自行登录一次系统，然后重试",
@@ -135,6 +136,7 @@
 
 	function start() {
 		load_resource()
+		check_maintain()
 		restore_passwd()
 		document.addEventListener('DOMContentLoaded', () => {
 			if (is_inner())
@@ -179,6 +181,15 @@
 		node.style.left = '0'
 		node.style.opacity = `${opacity}`
 		document.body.insertBefore(node, document.body.firstChild)
+	}
+
+	function check_maintain() {
+		var button = document.getElementById('button')
+		var hours = new Date().getHours()
+		if (hours >= reserve_start && hours < maintain_end) {
+			button.style.visibility = 'hidden'
+			show_message(desc_chn[2])
+		}
 	}
 
 	function restore_passwd() {
