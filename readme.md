@@ -1,4 +1,5 @@
 # Snores💤
+
 <p><b>S</b>cript for <b>N</b>JU Sp<b>o</b>rt <b>Re</b>servation <b>S</b>ystem</p>
 <p>Run this script and SNORE happily next morning - the server will do everything for you!</p>
 <p>Version 4.1.1, copyright (c) 2022~2023 by starreeze (starreeze@foxmail.com).</p>
@@ -8,6 +9,7 @@
 visit http://210.28.135.91:65434/ to use!
 
 ## Introduction
+
 <p>南京大学体育场地预约脚本（客户端），目前仅支持羽毛球、乒乓球。</p>
 <p>目前为防止滥用，服务端仅对已获授权的账户开放预约服务。要获取授权，请联系starreeze@foxmail.com。</p>
 <p>当天 8 点前或前一天 9 点后运行客户端发送请求，服务器会在 8 点整开始执行预约操作。服务端程序会调出浏览器，并自动完成登录、选择场地、选择同伴、滑动验证码、支付等操作，可以比手动操作节省2-3s，提高成功率；同时再也不用怕早 8 起不来了。</p>
@@ -15,6 +17,7 @@ visit http://210.28.135.91:65434/ to use!
 <p>使用前请确保在系统中添加了至少一个同伴，将会默认使用第一个同伴。</p>
 
 ## Changelog
+
 <p>v1.0, 2022.11.07: 基本功能：定时预约抢场地</p>
 <p>v2.0 preview1, 2022.11.21: 系统添加了验证码，更换了基于浏览器的框架，使得可以手工输入验证码；同时支持自动登录</p>
 <p>v2.0 preview2, 2022.11.26: 修复周末预约失败的 bug；部分功能实现从 python 改为使用 JavaScript，速度更快</p>
@@ -35,3 +38,4 @@ visit http://210.28.135.91:65434/ to use!
 <p>v4.0.3, 2023.04.26: 添加保存账号密码选项</p>
 <p>v4.1.0, 2023.05.08: 完善多用户逻辑，添加反馈和分级机制</p>
 <p>v4.1.1, 2023.05.24: 修复多用户bug，添加远程调试支持</p>
+<p>v4.1.2, 2024.03.05: 支持 docker 部署以更优雅地解决环境依赖；添加自动刷新机制，修正客户端更新滞后的问题</p>
