@@ -20,7 +20,7 @@
 	<h1>Snores💤</h1>
 	<p><b>S</b>cript for <b>N</b>JU Sp<b>o</b>rt <b>Re</b>servation <b>S</b>ystem</p>
 	<p>Run this script and SNORE happily next morning - the server will do everything for you!</p>
-	<p>Version 4.1.2, copyright (c) 2022~2023.</p>
+	<p>Version 4.1.3, copyright (c) 2022~2024.</p>
 
 
 	<h2>Usage</h2>
@@ -31,7 +31,7 @@
 	<p id="order" style="color: purple;">
 		<del>bug</del> feature 提醒（2023-10-26）：输入的场地号是原系统中场地在表格中的行号，不一定是场地序号。<br>
 		例如，在预约方肇周羽毛球（楼下）的场地时，输入1代表预约7号场，因为第一行就是7号。四组团和方肇周羽毛球（楼上）不受影响。
-		预计此<del>bug</del> feature 将于4.2.0版本修复。
+		预计此<del>bug</del> feature 将于4.2.0版本 <del>修复</del>调整。
 	</p>
 	<br><br>
 	<form>
@@ -52,18 +52,20 @@
 			<option value="13">13-14</option>
 			<option value="14">14-15</option>
 			<option value="15">15-16</option>
-			<option value="16">16-17</option>
+			<option value="16" selected="selected">16-17</option>
 			<option value="17">17-18</option>
 			<option value="18">18-19</option>
-			<option value="19" selected="selected">19-20</option>
+			<option value="19">19-20</option>
 			<option value="20">20-21</option>
 		</select><br><br>
-		<label for="field" style="width: 240px; float: left;">*场地（直接输入数字）:</label>
-		<input type="text" id="field" name="field" value="1" style="width: 60px;"><br><br>
+		<label for="field" style="width: 240px; float: left;">*场地 1（直接输入数字）:</label>
+		<input type="text" id="field" name="field" value="2" style="width: 60px;"><br><br>
 		<label for="user" style="width: 130px; float: left;">*学号: </label>
 		<input type="text" id="user"><br><br>
 		<label for="password" style="width: 130px; float: left;">*统一认证密码:</label>
 		<input type="password" id="password" name="password"><br><br>
+		<label for="alternative" style="width: 240px; float: left;">场地 2（用于容错，可不填）:</label>
+		<input type="text" id="alternative" name="alternative" style="width: 60px;"><br><br>
 		<input type="checkbox" id="fallback" name="fallback">
 		<label for="fallback">如果满足条件的场地无法选择，帮我任意选择一个其他的</label><br><br>
 		<input type="checkbox" id="store_pwd" name="store_pwd" checked="true">
@@ -91,8 +93,8 @@
 	<p>使用前请确保在系统中添加了至少一个同伴，将会默认使用第一个同伴。</p>
 
 	<h2>Known Issues</h2>
-	<p>client&server：验证身份信息时，进程异常卡死，触发超时（1次）</p>
-	<p>预约主程序：获取场地信息时，读取起始/结束时间字符串为空（1次）；获取场地信息时，识别场地表头和内部数据失败（1次）；最终支付时按钮失效，可能是由于滑动验证码操作失败（1次）</p>
+	<p>client&server：有时客户端会因为网络问题无法收到服务器返回的预约结果，导致超时。此时可以直接手动刷新页面，在已预约信息的部分检查是否预约成功；</p>
+	<p>主程序：有时日志中会记录滑动验证码错误，但实际上常常是因为这个场地已经被别人抢了（脚本大战）。</p>
 
 	<h2>Change Log</h2>
 	<p>v1.0, 2022.11.07: 基本功能：定时预约抢场地</p>
@@ -116,10 +118,11 @@
 	<p>v4.1.0, 2023.05.08: 完善多用户逻辑，添加反馈和分级机制</p>
 	<p>v4.1.1, 2023.05.24: 修复多用户bug，添加远程调试支持</p>
 	<p>v4.1.2, 2024.03.05: 支持 docker 部署以更优雅地解决环境依赖；添加自动刷新机制，修正客户端更新滞后的问题</p>
+	<p>v4.1.3, 2024.03.20: 支持选择 2 个场地以增强容错；小范围代码重构</p>
 </body>
 
 <script>
-	const reserve_start = 8, maintain_end = 12
+	const reserve_start = 8, maintain_end = 11
 	const pageRefreshIntervalDays = 3
 	const progressTime = 40, waitTimeout = 30
 	const totalImgNum = 7, opacity = 0.2
@@ -128,7 +131,7 @@
 	const desc_chn = {
 		0: "操作成功，您可以重新提交以修改信息",
 		1: "您的账号未经授权，请联系开发者",
-		2: "服务器于每日8:00-12:00例行维护，请于12:00后再预约",
+		2: `服务器于每日${reserve_start}:00-${maintain_end}:00例行维护，请于${maintain_end}:00后再预约`,
 		3: "操作成功: 您今天已经发送了一次预约请求，本次请求已经覆盖了之前的一次",
 		4: "登录失败，可能原因：密码错误",
 		5: "登录失败，可能原因：触发了短信验证码；请立即自行登录一次系统，然后重试",
@@ -259,6 +262,7 @@
 		const time = document.getElementById("time").value
 		const field = document.getElementById("field").value
 		const type = document.getElementById("type").value
+		const alternative = document.getElementById("alternative").value
 		const user = document.getElementById("user").value
 		const password = document.getElementById("password").value
 		if (!(time && user && field && password)) {
@@ -273,9 +277,9 @@
 			localStorage.removeItem("user")
 			localStorage.removeItem("password")
 		}
-		var args_str = `--user ${user} --passwd ${password} -t ${type} -p ${time}`
-		if (field)
-			args_str += ` -f ${field}`
+		var args_str = `--user ${user} --passwd ${password} -t ${type} -p ${time} -f ${field}`
+		if (alternative)
+			args_str += ` --alternative ${alternative}`
 		if (document.getElementById("fallback").checked)
 			args_str += ' --fallback'
 		const args = await encrypt(args_str)
