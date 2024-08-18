@@ -9,41 +9,137 @@
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Cache-control" content="no-cache">
 	<meta http-equiv="Cache" content="no-cache">
+	<link rel="shortcut icon" href="assets/icon.png" />
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f9;
+			color: #333;
+			margin: 0;
+			padding: 0;
+		}
+
+		h1 {
+			text-align: center;
+			color: #4CAF50;
+			margin-top: 20px;
+			margin-left: 10px;
+		}
+
+		h2 {
+			color: #333;
+			border-bottom: 2px solid #4CAF50;
+			padding-bottom: 5px;
+			margin-left: 10px;
+		}
+
+		p {
+			margin: 10px 10px;
+		}
+
+		form {
+			max-width: 600px;
+			margin: 20px auto;
+			background: #ffffff3f;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+
+		input[type="text"],
+		input[type="password"],
+		select {
+			width: calc(100% - 20px);
+			padding: 8px 10px;
+			margin-bottom: 15px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+
+		input[type="checkbox"] {
+			margin-right: 10px;
+		}
+
+		button {
+			width: 100%;
+			padding: 10px;
+			background-color: #4CAF50;
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 16px;
+		}
+
+		button:hover {
+			background-color: #45a049;
+		}
+
+		#progress {
+			width: 100%;
+			background-color: #ddd;
+			margin-top: 20px;
+		}
+
+		#progress_bar {
+			width: 0;
+			height: 30px;
+			background-color: #4CAF50;
+			line-height: 30px;
+			color: white;
+			text-align: center;
+		}
+
+		#order,
+		#prompt {
+			color: crimson;
+			text-align: center;
+			font-weight: bold;
+			margin-top: 20px;
+		}
+
+		.alert {
+			color: #333;
+			background-color: #f8d7da47;
+			padding: 15px;
+			margin: 10px 0;
+			border: 1px solid #f5c2c7;
+			border-radius: 4px;
+		}
+	</style>
 </head>
 
-<link rel="shortcut icon" href="assets/icon.png" />
-
 <body>
-	<!-- <video src="assets/bg.webm"
-		style="width: 100%; height: 100%; object-fit: cover; position: fixed; z-index: -1; top: 0; left: 0; opacity: 0.15;"
-		autoplay="autoplay" loop="loop" muted="muted"></video> -->
 	<h1>Snores💤</h1>
 	<p><b>S</b>cript for <b>N</b>JU Sp<b>o</b>rt <b>Re</b>servation <b>S</b>ystem</p>
 	<p>Run this script and SNORE happily next morning - the server will do everything for you!</p>
-	<p>Version 4.1.3, copyright (c) 2022~2024.</p>
-
+	<p>Version 4.2.0, copyright (c) 2022~2024.</p>
 
 	<h2>Usage</h2>
-	填写下面的信息，点击 SNORES! 即可预约明天的场地。<br><br>
-	目前（其他人使用本脚本的）预约情况（请主动避开，否则会预约失败）：
-	<p id="order" style="color: crimson;">正在加载场地信息，请不要点击SNORES按钮……</p>
-	<br><br>
-	<p id="order" style="color: purple;">
-		<del>bug</del> feature 提醒（2023-10-26）：输入的场地号是原系统中场地在表格中的行号，不一定是场地序号。<br>
-		例如，在预约方肇周羽毛球（楼下）的场地时，输入1代表预约7号场，因为第一行就是7号。四组团和方肇周羽毛球（楼上）不受影响。
-		预计此<del>bug</del> feature 将于4.2.0版本 <del>修复</del>调整。
-	</p>
-	<br><br>
+	<p>填写下面的信息，点击 SNORES! 即可预约明天的场地。<br>目前（其他人使用本脚本的）预约情况（请主动避开，否则会预约失败）：</p>
+	<p id="order">正在加载场地信息，请不要点击SNORES按钮……</p>
+	<p class="alert"><del>bug</del> feature
+		提醒（2023-10-26）：输入的场地号是原系统中场地在表格中的行号，不一定是场地序号。例如，在预约方肇周羽毛球（楼下）的场地时，输入1代表预约7号场，因为第一行就是7号。四组团和方肇周羽毛球（楼上）不受影响。预计此<del>bug</del>
+		feature 将于4.2.0版本 <del>修复</del>调整。</p>
+	<p class="alert" style="color: blue;">2024-07-05：修复了方肇周场地号错误的问题，现所有场地号已与系统对应，感谢反馈。</p>
+
 	<form>
-		<label for="type" style="width: 130px; float: left;">*场地类型:</label>
+		<label for="type">*场地类型:</label>
 		<select id="type" name="type">
 			<option value="0">方方肇周羽毛球（楼下）</option>
 			<option value="1">方肇周羽毛球（楼上）</option>
 			<option value="2">方肇周乒乓球</option>
-			<option value="7" selected="selected">四组团羽毛球</option>
-			<option value="10">鼓楼羽毛球</option>
-		</select><br><br>
-		<label for="time" style="width: 130px; float: left;">*时间段:</label>
+			<option value="8" selected="selected">四组团羽毛球</option>
+			<option value="11">鼓楼羽毛球</option>
+		</select>
+
+		<label for="time">*时间段:</label>
 		<select id="time" name="time">
 			<option value="9">9-10</option>
 			<option value="10">10-11</option>
@@ -57,28 +153,32 @@
 			<option value="18">18-19</option>
 			<option value="19">19-20</option>
 			<option value="20">20-21</option>
-		</select><br><br>
-		<label for="field" style="width: 240px; float: left;">*场地 1（直接输入数字）:</label>
-		<input type="text" id="field" name="field" value="2" style="width: 60px;"><br><br>
-		<label for="user" style="width: 130px; float: left;">*学号: </label>
-		<input type="text" id="user"><br><br>
-		<label for="password" style="width: 130px; float: left;">*统一认证密码:</label>
-		<input type="password" id="password" name="password"><br><br>
-		<label for="alternative" style="width: 240px; float: left;">场地 2（用于容错，可不填）:</label>
-		<input type="text" id="alternative" name="alternative" style="width: 60px;"><br><br>
-		<input type="checkbox" id="fallback" name="fallback">
-		<label for="fallback">如果满足条件的场地无法选择，帮我任意选择一个其他的</label><br><br>
-		<input type="checkbox" id="store_pwd" name="store_pwd" checked="true">
-		<label for="store_pwd">将我的账号密码保存在本地浏览器中，便于下次使用</label><br><br>
-	</form>
-	<button type="button" onclick="run()" id="button"
-		style="width: 180px; height: 40px; color: crimson; background-color: lightcyan;">
-		SNORES!
-	</button>
+			<option value="21">21-22</option>
+		</select>
 
-	<div id="progress" style="width: 100%; background-color: #ddd; visibility: hidden;">
-		<div id="progress_bar"
-			style="width: 0%; height: 30px; background-color: #4CAF50; line-height: 30px; color: white;"></div>
+		<label for="field">*场地 1（直接输入数字）:</label>
+		<input type="text" id="field" name="field" value="2">
+
+		<label for="user">*学号:</label>
+		<input type="text" id="user">
+
+		<label for="password">*统一认证密码:</label>
+		<input type="password" id="password" name="password">
+
+		<label for="alternative">场地 2（用于容错，可不填）:</label>
+		<input type="text" id="alternative" name="alternative">
+
+		<input type="checkbox" id="fallback" name="fallback" checked="true">
+		<label for="fallback">如果该条件无法选择，帮我选择一个其他场地（优先同时间）</label>
+
+		<input type="checkbox" id="store_pwd" name="store_pwd" checked="true">
+		<label for="store_pwd">将我的账号密码保存在本地浏览器中，便于下次使用</label>
+
+		<button type="button" onclick="run()" id="button">SNORES!</button>
+	</form>
+
+	<div id="progress">
+		<div id="progress_bar"></div>
 	</div>
 
 	<p id="prompt" style="color: crimson;"></p>
@@ -119,6 +219,7 @@
 	<p>v4.1.1, 2023.05.24: 修复多用户bug，添加远程调试支持</p>
 	<p>v4.1.2, 2024.03.05: 支持 docker 部署以更优雅地解决环境依赖；添加自动刷新机制，修正客户端更新滞后的问题</p>
 	<p>v4.1.3, 2024.03.20: 支持选择 2 个场地以增强容错；小范围代码重构</p>
+	<p>v4.2.0, 2024.07.05: 优化 fallback 逻辑优先同时段；移除服务端过时无用的 session 逻辑；添加 21-22 时段；优化 UI</p>
 </body>
 
 <script>
