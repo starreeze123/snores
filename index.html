@@ -119,7 +119,7 @@
 	<h1>Snores💤</h1>
 	<p><b>S</b>cript for <b>N</b>JU Sp<b>o</b>rt <b>Re</b>servation <b>S</b>ystem</p>
 	<p>Run this script and SNORE happily next morning - the server will do everything for you!</p>
-	<p>Version 4.2.0, copyright (c) 2022~2024.</p>
+	<p>Version 5.0.0, copyright (c) 2022~2024.</p>
 
 	<h2>Usage</h2>
 	<p>填写下面的信息，点击 SNORES! 即可预约明天的场地。<br>目前（其他人使用本脚本的）预约情况（请主动避开，否则会预约失败）：</p>
@@ -132,11 +132,11 @@
 	<form>
 		<label for="type">*场地类型:</label>
 		<select id="type" name="type">
-			<option value="0">方方肇周羽毛球（楼下）</option>
-			<option value="1">方肇周羽毛球（楼上）</option>
-			<option value="2">方肇周乒乓球</option>
-			<option value="8" selected="selected">四组团羽毛球</option>
-			<option value="11">鼓楼羽毛球</option>
+			<option value="120">方肇周羽毛球（楼下）</option>
+			<option value="123">方肇周羽毛球（楼上）</option>
+			<option value="124">方肇周乒乓球</option>
+			<option value="126" selected="selected">四组团羽毛球</option>
+			<option value="127">鼓楼羽毛球</option>
 		</select>
 
 		<label for="time">*时间段:</label>
@@ -165,8 +165,8 @@
 		<label for="password">*统一认证密码:</label>
 		<input type="password" id="password" name="password">
 
-		<label for="alternative">场地 2（用于容错，可不填）:</label>
-		<input type="text" id="alternative" name="alternative">
+		<!-- <label for="alternative">场地 2（用于容错，可不填）:</label>
+		<input type="text" id="alternative" name="alternative"> -->
 
 		<input type="checkbox" id="fallback" name="fallback" checked="true">
 		<label for="fallback">如果该条件无法选择，帮我选择一个其他场地（优先同时间）</label>
@@ -220,6 +220,7 @@
 	<p>v4.1.2, 2024.03.05: 支持 docker 部署以更优雅地解决环境依赖；添加自动刷新机制，修正客户端更新滞后的问题</p>
 	<p>v4.1.3, 2024.03.20: 支持选择 2 个场地以增强容错；小范围代码重构</p>
 	<p>v4.2.0, 2024.07.05: 优化 fallback 逻辑优先同时段；移除服务端过时无用的 session 逻辑；添加 21-22 时段；优化 UI</p>
+	<p>v5.0.0, 2024.08.17: 全面重构后端，使用requests而非浏览器自动化实现预约主流程，大幅提高可靠性和效率；优化OCR验证码识别流程，大幅提高验证账号信息的速度</p>
 </body>
 
 <script>
@@ -363,7 +364,7 @@
 		const time = document.getElementById("time").value
 		const field = document.getElementById("field").value
 		const type = document.getElementById("type").value
-		const alternative = document.getElementById("alternative").value
+		// const alternative = document.getElementById("alternative").value
 		const user = document.getElementById("user").value
 		const password = document.getElementById("password").value
 		if (!(time && user && field && password)) {
@@ -379,8 +380,8 @@
 			localStorage.removeItem("password")
 		}
 		var args_str = `--user ${user} --passwd ${password} -t ${type} -p ${time} -f ${field}`
-		if (alternative)
-			args_str += ` --alternative ${alternative}`
+		// if (alternative)
+		// 	args_str += ` --alternative ${alternative}`
 		if (document.getElementById("fallback").checked)
 			args_str += ' --fallback'
 		const args = await encrypt(args_str)
