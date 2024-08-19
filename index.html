@@ -223,6 +223,7 @@
 </body>
 
 <script>
+	const client_version = 50000
 	const reserve_start = 8, maintain_end = 11
 	const pageRefreshIntervalDays = 3
 	const progressTime = 20, waitTimeout = 10
@@ -237,6 +238,7 @@
 		4: "登录失败，可能原因：密码错误",
 		5: "登录失败，可能原因：触发了短信验证码；请立即自行登录一次系统，然后重试",
 		6: "登录失败，未知错误；如果您可以正常手动登录，请联系开发者",
+		7: "检测到新版客户端，点击确定重新加载",
 		10: "FORBIDDEN: 您可以先刷新页面试试；如果您坚持认为自己没有问题，请联系开发者",
 		100: "正在连接服务器...",
 		101: "请稍等，正在验证您的信息，大约需要30-45秒；请不要锁屏，并始终将本页面置于前台，直到收到结果提示",
@@ -378,7 +380,7 @@
 			localStorage.removeItem("user")
 			localStorage.removeItem("password")
 		}
-		var args_str = `--user ${user} --passwd ${password} -t ${type} -p ${time} -f ${field}`
+		var args_str = `--user ${user} --passwd ${password} -t ${type} -p ${time} -f ${field} --version ${client_version}`
 		// if (alternative)
 		// 	args_str += ` --alternative ${alternative}`
 		if (document.getElementById("fallback").checked)
