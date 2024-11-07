@@ -119,7 +119,7 @@
 	<h1>Snores💤</h1>
 	<p><b>S</b>cript for <b>N</b>JU Sp<b>o</b>rt <b>Re</b>servation <b>S</b>ystem</p>
 	<p>Run this script and SNORE happily next morning - the server will do everything for you!</p>
-	<p>Version 5.0.0, copyright (c) 2022~2024.</p>
+	<p>Version 5.0.1, copyright (c) 2022~2024.</p>
 
 	<h2>Usage</h2>
 	<p>填写下面的信息，点击 SNORES! 即可预约明天的场地。<br>目前（其他人使用本脚本的）预约情况（请主动避开，否则会预约失败）：</p>
@@ -129,7 +129,7 @@
 			https://github.com/starreeze/snores </a> 对于功能性建议，也欢迎提 issue。</p>
 
 	<form>
-		<label for="type">*场地类型:</label>
+		<label for="type">场地类型:</label>
 		<select id="type" name="type">
 			<option value="120">方肇周羽毛球（楼下）</option>
 			<option value="123">方肇周羽毛球（楼上）</option>
@@ -138,7 +138,7 @@
 			<option value="127">鼓楼羽毛球</option>
 		</select>
 
-		<label for="time">*时间段:</label>
+		<label for="time">时间段:</label>
 		<select id="time" name="time">
 			<option value="9">9-10</option>
 			<option value="10">10-11</option>
@@ -155,17 +155,14 @@
 			<option value="21">21-22</option>
 		</select>
 
-		<label for="field">*场地 1（直接输入数字）:</label>
-		<input type="text" id="field" name="field" value="2">
+		<label for="field">场地号:</label>
+		<input type="text" id="field" name="field" value="8">
 
-		<label for="user">*学号:</label>
+		<label for="user">学号:</label>
 		<input type="text" id="user">
 
-		<label for="password">*统一认证密码:</label>
+		<label for="password">统一认证密码:</label>
 		<input type="password" id="password" name="password">
-
-		<!-- <label for="alternative">场地 2（用于容错，可不填）:</label>
-		<input type="text" id="alternative" name="alternative"> -->
 
 		<input type="checkbox" id="fallback" name="fallback" checked="true">
 		<label for="fallback">如果该条件无法选择，帮我选择一个其他场地（优先同时间）</label>
@@ -220,10 +217,11 @@
 	<p>v4.1.3, 2024.03.20: 支持选择 2 个场地以增强容错；小范围代码重构</p>
 	<p>v4.2.0, 2024.07.05: 优化 fallback 逻辑优先同时段；移除服务端过时无用的 session 逻辑；添加 21-22 时段；优化 UI</p>
 	<p>v5.0.0, 2024.08.17: 全面重构后端，使用requests而非浏览器自动化实现预约主流程，大幅提高可靠性和效率；优化OCR验证码识别流程，大幅提高验证账号信息的速度</p>
+	<p>v5.0.1, 2024.11.07: 调整 fallback 逻辑，修复失效的 bug；优化参数</p>
 </body>
 
 <script>
-	const client_version = 50000
+	const client_version = 50001
 	const reserve_start = 8, maintain_end = 11
 	const pageRefreshIntervalDays = 3
 	const progressTime = 20, waitTimeout = 10
@@ -238,7 +236,7 @@
 		4: "登录失败，可能原因：密码错误",
 		5: "登录失败，可能原因：触发了短信验证码；请立即自行登录一次系统，然后重试",
 		6: "登录失败，未知错误；如果您可以正常手动登录，请联系开发者",
-		7: "检测到新版客户端，点击确定重新加载",
+		7: "检测到新版客户端，点击确定后请手动刷新页面以加载新版本",
 		10: "FORBIDDEN: 您可以先刷新页面试试；如果您坚持认为自己没有问题，请联系开发者",
 		100: "正在连接服务器...",
 		101: "请稍等，正在验证您的信息，大约需要30-45秒；请不要锁屏，并始终将本页面置于前台，直到收到结果提示",
