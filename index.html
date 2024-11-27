@@ -16,8 +16,8 @@
 			background-color: #f4f4f9;
 			color: #333;
 			margin: 0 auto;
-			padding: 20px;
-			max-width: 1200px;
+			padding: 12px;
+			max-width: 1080px;
 		}
 
 		h1 {
@@ -42,8 +42,8 @@
 			max-width: 600px;
 			margin: 20px auto;
 			padding: 24px;
-			background: rgba(255, 255, 255, 0.8);
-			border: 1px solid rgba(76, 175, 80, 0.2);
+			background: rgba(255, 255, 255, 0.5);
+			border: 1px solid #4CAF50;
 			border-radius: 8px;
 			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 		}
@@ -57,7 +57,7 @@
 		input[type="text"],
 		input[type="password"],
 		select {
-			width: 95%;
+			width: 90%;
 			padding: 10px 12px;
 			margin-bottom: 20px;
 			border: 1px solid rgba(0, 0, 0, 0.1);
@@ -107,21 +107,6 @@
 			transform: translateY(0);
 		}
 
-		/* #progress {
-			width: 100%;
-			background-color: #ddd;
-			margin-top: 20px;
-		}
-
-		#progress_bar {
-			width: 0;
-			height: 30px;
-			background-color: #4CAF50;
-			line-height: 30px;
-			color: white;
-			text-align: center;
-		} */
-
 		#order,
 		#prompt {
 			color: #4CAF50;
@@ -131,20 +116,31 @@
 		}
 
 		.alert {
-			background-color: rgba(248, 215, 218, 0.3);
-			border: 1px solid rgba(245, 194, 199, 0.5);
+			background-color: rgba(211, 249, 202, 0.3);
+			border: 1px solid rgba(182, 244, 176, 0.5);
 			border-radius: 6px;
 			padding: 16px;
 			margin: 16px 0;
 		}
 
 		.section {
-			background: rgba(255, 255, 255, 0.3);
+			background: rgba(255, 255, 255, 0.5);
 			border-radius: 12px;
-			padding: 32px;
-			margin: 32px 0;
+			padding: 16px 12px;
+			margin: 16px 0;
 			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-			backdrop-filter: blur(8px);
+			backdrop-filter: blur(4px);
+		}
+
+		@media (min-width: 1024px) {
+			body {
+				padding: 20px;
+			}
+
+			.section {
+				padding: 32px;
+				margin: 32px 0;
+			}
 		}
 
 		@keyframes spin {
@@ -252,17 +248,15 @@
 	<div class="section">
 		<h1>Snores💤</h1>
 		<p><b>S</b>cript for <b>N</b>JU Sp<b>o</b>rt <b>Re</b>servation <b>S</b>ystem</p>
-		<p>Run this script and SNORE happily next morning - the server will do everything for you!</p>
-		<p>Version 5.0.1, copyright (c) 2022~2024.</p>
+		<!-- <p>Run this script and SNORE happily next morning - the server will do everything for you!</p> -->
+		<p>Version 5.0.2, copyright (c) 2022~2024.</p>
 	</div>
 
 	<div class="section">
 		<h2>Usage</h2>
 		<p>填写下面的信息，点击 SNORES! 即可预约明天的场地。<br>目前（其他人使用本脚本的）预约情况（请主动避开，否则会预约失败）：</p>
 		<p id="order">正在加载场地信息，请不要点击SNORES按钮……</p>
-		<p class="alert">5.0 船新版本已上线！全面重构后端，大幅提高可靠性和响应速度！新版本难免有 bug，请积极反馈，谢谢！</p>
-		<p class="alert">如有对于前端 UI 的改进提议，请直接提交 pr 到 <a href="https://github.com/starreeze/snores">
-				https://github.com/starreeze/snores </a> 对于功能性建议，也欢迎提 issue。</p>
+		<p class="alert">v5 船新版本已上线！全面重构后端，大幅提高可靠性和响应速度！新版本难免有 bug，请积极反馈，谢谢！</p>
 
 		<form>
 			<label for="type">场地类型:</label>
@@ -313,6 +307,8 @@
 			<div class="button-container">
 				<button type="button" onclick="run()" id="button">SNORES!</button>
 			</div>
+
+			<p id="prompt" style="color: #4CAF50;"></p>
 		</form>
 	</div>
 
@@ -363,8 +359,6 @@
 		<p>v5.0.2, 2024.11.26: 添加登录、信息获取重试步骤；强化日志错误提示；优化UI</p>
 	</div>
 
-	<p id="prompt" style="color: #4CAF50;"></p>
-
 </body>
 
 <script>
@@ -372,7 +366,7 @@
 	const reserve_start = 8, maintain_end = 11
 	const pageRefreshIntervalDays = 3
 	const progressTime = 20, waitTimeout = 10
-	const totalImgNum = 7, opacity = 0.4
+	const totalImgNum = 7, opacity = 0.5
 	const serverUrl = 'ws://210.28.135.34:65433'
 	// const serverUrl = 'ws://127.0.0.1:65433'
 	const desc_chn = {
